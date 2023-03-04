@@ -1,0 +1,8 @@
+# go.k6.io/k6 v0.29.0
+## explicit
+go.k6.io/k6/js/internal/modules
+go.k6.io/k6/js/modules
+# github.com/traefik/yaegi v0.9.7
+## explicit
+github.com/traefik/yaegi/interp
+github.com/traefik/yaegi/stdlib

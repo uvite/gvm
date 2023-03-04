@@ -11,6 +11,16 @@ import (
 	"github.com/uvite/gvm/pkg/lib/consts"
 	"github.com/uvite/gvm/pkg/loader"
 	"github.com/uvite/gvm/pkg/metrics"
+	_ "github.com/uvite/gvm/plugin/xk6-dotenv"
+	_ "github.com/uvite/gvm/plugin/xk6-exec"
+	_ "github.com/uvite/gvm/plugin/xk6-file"
+	_ "github.com/uvite/gvm/plugin/xk6-nats"
+	_ "github.com/uvite/gvm/plugin/xk6-redis"
+	_ "github.com/uvite/gvm/plugin/xk6-sql"
+	_ "github.com/uvite/gvm/plugin/xk6-ta"
+	_ "github.com/uvite/gvm/plugin/xk6-timers"
+	_ "github.com/uvite/gvm/plugin/xk6-websockets"
+	_ "github.com/uvite/gvm/plugin/xk6-yaml"
 	"os"
 )
 
@@ -32,25 +42,28 @@ func (gvm *Gvm) Load(file string) error {
 	fs := afero.NewOsFs()
 	pwd, _ := os.Getwd()
 	logger := logrus.New()
+
 	gvm.Logger = logger
-	code, err := loader.ReadSource(logger, fmt.Sprintf("%s/%s", pwd, file), pwd, map[string]afero.Fs{"file": fs}, nil)
+	filepath := fmt.Sprintf("%s/%s", pwd, file)
+	code, err := loader.ReadSource(logger, filepath, pwd, map[string]afero.Fs{"file": fs}, nil)
 	if err != nil {
 		return fmt.Errorf("couldn't load file: %s", err)
 	}
+	//fmt.Println(filepath)
 	//fmt.Println(code.Data)
 
 	rtOpts := lib.RuntimeOptions{}
-	r, err := gvm.GetSimpleRunner("/script.js", fmt.Sprintf(`
-			//import {Nats} from 'k6/x/nats';
-			//import ta from 'k6/x/ta';
-			//import {sleep} from 'k6'; 
+	r, err := gvm.GetSimpleRunner(filepath, fmt.Sprintf(`
+			import {Nats} from 'k6/x/nats';
+			import ta from 'k6/x/ta';
+			import {sleep} from 'k6'; 
 
 			%s
 
 			`, code.Data),
 		fs, rtOpts)
 
-	//	fmt.Println(err)
+	//fmt.Println(err)
 
 	gvm.Runner = r
 	gvm.Runtime = r.Bundle.Vm
@@ -58,22 +71,30 @@ func (gvm *Gvm) Load(file string) error {
 		return fmt.Errorf("couldn't set exported options with merged values: %w", err)
 
 	}
-	ch := make(chan metrics.SampleContainer, 100)
-	//ctx, _ := context.WithCancel(context.Background())
-	//defer cancel()
-	err = r.Setup(gvm.Ctx, ch)
-
-	initVU, err := r.NewVU(gvm.Ctx, 1, 1, ch)
-
-	vu := initVU.Activate(&lib.VUActivationParams{RunContext: gvm.Ctx})
-	gvm.Vu = vu
 
 	return nil
 }
+func (gvm *Gvm) Init() error {
+
+	ch := make(chan metrics.SampleContainer, 100)
+	//ctx, _ := context.WithCancel(context.Background())
+	//defer cancel()
+	err := gvm.Runner.Setup(gvm.Ctx, ch)
+	if err != nil {
+		return err
+	}
+	initVU, err := gvm.Runner.NewVU(gvm.Ctx, 1, 1, ch)
+
+	vu := initVU.Activate(&lib.VUActivationParams{RunContext: gvm.Ctx})
+	gvm.Vu = vu
+	return err
+}
+
 func (gvm *Gvm) Run() (goja.Value, error) {
 
-	gvm.Vu.RunOnce()
+	//gvm.Vu.RunOnce()
 	v, ok := gvm.Vu.RunDefault()
+	//fmt.Println(v, ok)
 	if ok != nil {
 		return nil, ok
 	}

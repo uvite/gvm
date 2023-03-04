@@ -246,14 +246,17 @@ func (i *InitContext) Open(filename string, args ...string) (goja.Value, error) 
 	// will probably be need for archive execution under windows if always consider '/...' as an
 	// absolute path.
 	if filename[0] != '/' && filename[0] != '\\' && !filepath.IsAbs(filename) {
+		//fmt.Println("=====", i.pwd.Path, filename)
+
 		filename = filepath.Join(i.pwd.Path, filename)
 	}
+	//fmt.Println("=====", filename)
 	filename = filepath.Clean(filename)
 	fs := i.filesystems["file"]
 	if filename[0:1] != afero.FilePathSeparator {
 		filename = afero.FilePathSeparator + filename
 	}
-
+	//fmt.Println(fs, filename)
 	data, err := readFile(fs, filename)
 	if err != nil {
 		return nil, err

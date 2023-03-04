@@ -9,8 +9,6 @@ import (
 	"github.com/uvite/gvm/tart/fixedpoint"
 	"github.com/uvite/gvm/tart/floats"
 	"github.com/uvite/gvm/tart/types"
-	"syscall"
-
 	"os"
 	"os/signal"
 	"time"
@@ -30,7 +28,12 @@ func main() {
 	defer cancel()
 	gvm.Ctx = ctx
 
-	err := gvm.Load("jma.js")
+	err := gvm.Load("test/dotenv.test.js")
+	//fmt.Println(err)
+	gvm.Init()
+	//fmt.Println(err)
+
+	_, err = gvm.Run()
 	fmt.Println(err)
 	//gvm.Run()
 	//
@@ -61,8 +64,8 @@ func main() {
 	//go func() {
 	//	kline(gvm)
 	//}()
-	kline(gvm)
-	WaitForSignal(ctx, syscall.SIGINT, syscall.SIGTERM)
+	//kline(gvm)
+	//WaitForSignal(ctx, syscall.SIGINT, syscall.SIGTERM)
 	//
 
 	//for i := 0; i < 5; i++ {

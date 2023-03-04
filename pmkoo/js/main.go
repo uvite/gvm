@@ -1,4 +1,5 @@
 package main
+
 //
 //import (
 //	"context"
@@ -7,16 +8,16 @@ package main
 //	"github.com/fsnotify/fsnotify"
 //	"github.com/sirupsen/logrus"
 //	"github.com/spf13/afero"
-//	"github.com/uvite/u8/js"
-//	"github.com/uvite/u8/lib"
-//	"github.com/uvite/u8/loader"
-//	"github.com/uvite/u8/metrics"
-//	_ "github.com/uvite/u8/plugin/xk6-nats"
-//	_ "github.com/uvite/u8/plugin/xk6-ta"
-//	"github.com/uvite/u8/pmkoo/genv"
-//	"github.com/uvite/u8/tart/fixedpoint"
-//	"github.com/uvite/u8/tart/floats"
-//	"github.com/uvite/u8/tart/types"
+//	"github.com/uvite/gvm/pkg/js"
+//	"github.com/uvite/gvm/pkg/lib"
+//	"github.com/uvite/gvm/pkg/loader"
+//	"github.com/uvite/gvm/pkg/metrics"
+//	_ "github.com/uvite/gvm/pkg/plugin/xk6-nats"
+//	_ "github.com/uvite/gvm/pkg/plugin/xk6-ta"
+//	"github.com/uvite/gvm/pkg/pmkoo/genv"
+//	"github.com/uvite/gvm/pkg/tart/fixedpoint"
+//	"github.com/uvite/gvm/pkg/tart/floats"
+//	"github.com/uvite/gvm/pkg/tart/types"
 //	"log"
 //	"os"
 //	"os/signal"
