@@ -36,6 +36,7 @@ func ReadSource(
 	} else {
 		srcLocalPath = filepath.Join(pwd, src)
 	}
+	fmt.Println("asdfasdfasdf", srcLocalPath)
 	// All paths should start with a / in all fses. This is mostly for windows where it will start
 	// with a volume name : C:\something.js
 	srcLocalPath = filepath.Clean(afero.FilePathSeparator + srcLocalPath)
