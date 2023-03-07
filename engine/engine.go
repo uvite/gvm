@@ -37,6 +37,44 @@ func NewGvm() (*Gvm, error) {
 	return &gvm, nil
 }
 
+func (gvm *Gvm) LoadFile(filepath string) error {
+
+	fs := afero.NewOsFs()
+	pwd, _ := os.Getwd()
+	logger := logrus.New()
+
+	gvm.Logger = logger
+	//filepath := fmt.Sprintf("%s/%s", pwd, file)
+	code, err := loader.ReadSource(logger, filepath, pwd, map[string]afero.Fs{"file": fs}, nil)
+	if err != nil {
+		return fmt.Errorf("couldn't load file: %s", err)
+	}
+	//fmt.Println(filepath)
+	//fmt.Println(code.Data)
+
+	rtOpts := lib.RuntimeOptions{}
+	r, err := gvm.GetSimpleRunner(filepath, fmt.Sprintf(`
+			import {Nats} from 'k6/x/nats';
+			import ta from 'k6/x/ta';
+			import {sleep} from 'k6'; 
+
+			%s
+
+			`, code.Data),
+		fs, rtOpts)
+
+	//fmt.Println(err)
+
+	gvm.Runner = r
+	gvm.Runtime = r.Bundle.Vm
+	if err != nil {
+		return fmt.Errorf("couldn't set exported options with merged values: %w", err)
+
+	}
+
+	return nil
+}
+
 func (gvm *Gvm) Load(file string) error {
 
 	fs := afero.NewOsFs()
