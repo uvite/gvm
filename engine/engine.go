@@ -16,7 +16,7 @@ import (
 	_ "github.com/uvite/gvm/plugin/xk6-file"
 	_ "github.com/uvite/gvm/plugin/xk6-nats"
 	_ "github.com/uvite/gvm/plugin/xk6-redis"
-	_ "github.com/uvite/gvm/plugin/xk6-sql"
+	//_ "github.com/uvite/gvm/plugin/xk6-sql"
 	_ "github.com/uvite/gvm/plugin/xk6-ta"
 	_ "github.com/uvite/gvm/plugin/xk6-timers"
 	_ "github.com/uvite/gvm/plugin/xk6-websockets"
